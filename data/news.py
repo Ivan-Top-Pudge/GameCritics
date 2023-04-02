@@ -15,6 +15,7 @@ class News(SqlAlchemyBase):
     dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.now())
     changed = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    official = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
     user = orm.relationship('User')
 

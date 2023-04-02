@@ -19,7 +19,7 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime)
 
-    reviews = orm.relationship('Reviews', back_populates='user')
+    reviews = orm.relationship('Review', back_populates='user')
     news = orm.relationship('News', back_populates='user')
 
     def __repr__(self):

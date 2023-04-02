@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+
+{% block head %}
+
+<title>Топ критиков</title>
+
+{%endblock%}
+
+{%block body%}
+
+    <h3>Топ критиков</h3>
+
+    <ol>
+        {%for user in users%}
+        <li>{{user.login}} - {{user.rating}}</li>
+        {%endfor%}
+    </ol>
+
+{%endblock%}

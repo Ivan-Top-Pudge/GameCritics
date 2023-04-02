@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+
+{% block head %}
+
+<title>Игровые новости</title>
+
+{%endblock%}
+
+{%block body%}
+<h3>Все новости</h3>
+
+<ul>
+{% for item in news %}
+    <li>{{item.title}} {{item.content}}</li>
+{%endfor%}
+</ul>
+{%endblock%}

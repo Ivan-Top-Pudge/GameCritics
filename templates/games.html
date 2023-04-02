@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block head %}
+
+<title>Список игр</title>
+
+{%endblock%}
+
+{%block body%}
+<h3>Все Игры</h3>
+
+<ul>
+{% for item in games %}
+    <li>
+        <a href="games/{{item.link}}">Ссылка</a>
+        {{item.title}}
+    </li>
+{%endfor%}
+</ul>
+{%endblock%}
