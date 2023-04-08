@@ -3,6 +3,7 @@ from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
 from data.db_session import SqlAlchemyBase
 from flask_login import UserMixin
+import datetime
 
 
 class User(SqlAlchemyBase, UserMixin):
@@ -17,7 +18,7 @@ class User(SqlAlchemyBase, UserMixin):
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     certified = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    modified_date = sqlalchemy.Column(sqlalchemy.DateTime)
+    modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
 
     reviews = orm.relationship('Review', back_populates='user')
     news = orm.relationship('News', back_populates='user')
