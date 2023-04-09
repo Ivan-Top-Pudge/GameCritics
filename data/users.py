@@ -17,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     profile_photo = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     certified = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    rank = sqlalchemy.Column(sqlalchemy.String, default='Любитель')
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
 

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-from flask_login import login_user, LoginManager, login_required, logout_user
+from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 
 from data import db_session
 from data.news import News
@@ -8,6 +8,7 @@ from data.games import Game
 from data.reviews import Review
 from forms.login import LoginForm
 from forms.register import RegisterForm
+from forms.review_form import ReviewForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'critic_secret_key'
@@ -34,12 +35,22 @@ def games_list():
     return render_template('games.html', games=games)
 
 
-@app.route('/games/<link>')
+@app.route('/games/<link>', methods=['GET', 'POST'])
 def game_info(link: str):
+    form = ReviewForm()
     db_sess = db_session.create_session()
     game = db_sess.query(Game).filter(Game.link == link).first()
     reviews = db_sess.query(Review).filter(Review.game_id == game.id)
-    return render_template('game_info.html', game=game, reviews=reviews)
+    if form.validate_on_submit():
+        review = Review()
+        review.content = form.content.data
+        review.author = current_user.id
+        review.rate = form.rate.data
+        review.game_id = game.id
+        db_sess.add(review)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('game_info.html', game=game, reviews=reviews, form=form)
 
 
 @app.route('/info')
@@ -93,6 +104,13 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/profile/<int:user_id>')
+def profile(user_id: int):
+    db_sess = db_session.create_session()
+    user = db_sess.get(User, user_id)
+    return render_template('profile.html', user=user)
 
 
 @login_manager.user_loader

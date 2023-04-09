@@ -22,4 +22,31 @@
     </ul>
 </div>
 
+
+{% if current_user.is_authenticated %}
+    <h3>Оставьте свой отзыв!</h3>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p class="field">
+            {{ form.rate.label }}<br>
+            {{ form.rate(class="form-control", type="float") }}<br>
+            {% for error in form.rate.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p class="field">
+            {{ form.content.label }}<br>
+            {{ form.content(class="form-control", type="string") }}<br>
+            {% for error in form.content.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    </form>
+{%endif%}
+
 {%endblock%}

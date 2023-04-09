@@ -10,6 +10,7 @@ class Review(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     content = sqlalchemy.Column(sqlalchemy.String)
     author = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
+    rate = sqlalchemy.Column(sqlalchemy.Float)
     game_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('games.id'))
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
