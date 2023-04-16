@@ -17,5 +17,7 @@ class Game(SqlAlchemyBase):
     changed = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     link = sqlalchemy.Column(sqlalchemy.String, unique=True)
 
+    approved = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+
     def __repr__(self):
         return f"<Game> {self.title} by {self.developer}"

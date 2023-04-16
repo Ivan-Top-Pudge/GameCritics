@@ -17,6 +17,8 @@ class News(SqlAlchemyBase):
     changed = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     official = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
+    approved = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+
     user = orm.relationship('User')
 
     def __repr__(self):
