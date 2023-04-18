@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, abort
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 
 from data import db_session
@@ -9,6 +9,7 @@ from data.reviews import Review
 from forms.login import LoginForm
 from forms.register import RegisterForm
 from forms.review_form import ReviewForm
+from forms.news_form import NewsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'critic_secret_key'
@@ -24,7 +25,7 @@ def home_page():
 @app.route('/news')
 def news_list():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).all()
+    news = db_sess.query(News).filter(News.approved == 1).all()
     return render_template('news.html', news=news)
 
 
@@ -113,6 +114,22 @@ def profile(user_id: int):
     return render_template('profile.html', user=user)
 
 
+@app.route('/add_news', methods=['GET', 'POST'])
+def add_news():
+    form = NewsForm()
+    if form.validate_on_submit():
+        news = News()
+        news.title = form.title.data
+        news.content = form.content.data
+        news.author = current_user.id
+
+        db_sess = db_session.create_session()
+        db_sess.add(news)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('add_news.html', form=form)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -126,11 +143,25 @@ def logout():
     return redirect("/")
 
 
-def add_test_data():
+@app.route('/admin')
+@login_required
+def admin():
+    if current_user.rank == 'Админ' or current_user.rank == 'Модератор':
+        db_sess = db_session.create_session()
+        news = db_sess.query(News).filter(News.approved == 0).all()
+        games = db_sess.query(Game).filter(Game.approved == 0).all()
+        return render_template('admin.html', add_news=news, add_games=games)
+    abort(403)
+
+
+@app.route('/approve/<string:data_type>/<int:news_id>')
+def approve(data_type: str, news_id: int):
     db_sess = db_session.create_session()
-    for i in range(1, 10):
-        ...
-    db_sess.commit()
+    if data_type == 'news':
+        news = db_sess.get(News, news_id)
+        news.approved = True
+        db_sess.commit()
+        return redirect('/news')
 
 
 if __name__ == '__main__':

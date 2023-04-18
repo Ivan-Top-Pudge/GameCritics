@@ -1,0 +1,19 @@
+{%extends "index.html"%}
+
+{%block head%}
+<title>Панель админа</title>
+{%endblock%}
+
+{%block body%}
+<ol>
+    {%for news in add_news%}
+    <li>
+        <div>{{news.user.login}} {{news.user.rank}}</div>
+        <div>{{news.title}}</div>
+        <article>{{news.content}}</article>
+        <a href="/approve/news/{{news.id}}">Принять</a>
+        <a href="/decline/news/{{news.id}}">Отклонить</a>
+    </li>
+    {%endfor%}
+</ol>
+{%endblock%}
