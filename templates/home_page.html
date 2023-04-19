@@ -4,14 +4,31 @@
 {% block head %}
 
 <title>Отзывы на игры</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
 
 {%endblock%}
 
 {%block body%}
-<h3>Добро пожаловать на сайт
-    {% if current_user.is_authenticated %}
-    {{current_user.name}}
-    {%endif%}
-    !
-</h3>
+
+<h3>Новости нашего сайта</h3>
+
+<section class="main-content">
+    {% for item in news %}
+        <div class="content-item">
+            <a href="/news/{{item.id}}" class="item-body" aria-label="{{item.title}}">
+                <div class="item-tumbnail">
+                    <span>
+                        <img src="" alt="{{item.title}}">
+                    </span>
+                </div>
+                <div class="item-details">
+                    <span class="item-title">{{item.title}}</span>
+                    <div class="item-subtitle"></div>
+                    <div class="item-more-data">{{item.user.login}}</div>
+                </div>
+            </a>
+        </div>
+    {%endfor%}
+    </section>
+
 {%endblock%}

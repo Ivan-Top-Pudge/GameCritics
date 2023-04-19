@@ -53,6 +53,15 @@
             </p>
         {% endfor %}
     </p>
+    <p>
+        {{ form.profile_photo.label }}<br>
+        {{ form.profile_photo(class="form-control", type="file") }}<br>
+        {% for error in form.profile_photo.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>

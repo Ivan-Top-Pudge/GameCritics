@@ -1,6 +1,6 @@
-from flask import Flask, render_template, redirect, abort
+from flask import Flask, render_template, redirect, abort, flash
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
-
+from sqlalchemy import desc
 from data import db_session
 from data.news import News
 from data.users import User
@@ -19,14 +19,23 @@ login_manager.init_app(app)
 
 @app.route('/')
 def home_page():
-    return render_template('home_page.html')
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.official == 1).all()
+    return render_template('home_page.html', news=news)
 
 
 @app.route('/news')
 def news_list():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.approved == 1).all()
+    news = db_sess.query(News).filter(News.approved == 1).order_by(desc(News.id))
     return render_template('news.html', news=news)
+
+
+@app.route('/news/<int:news_id>')
+def get_news(news_id: int):
+    db_sess = db_session.create_session()
+    news = db_sess.get(News, news_id)
+    return render_template('news_info.html', news=news)
 
 
 @app.route('/games')
@@ -86,8 +95,14 @@ def reqister():
         user.email = form.email.data
         user.set_password(form.password.data)
 
+        if form.profile_photo.data:
+            print('Есть фото')
+        else:
+            print('Нет фото')
+
         db_sess.add(user)
         db_sess.commit()
+        login_user(user)
         return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
 
@@ -123,6 +138,10 @@ def add_news():
         news.content = form.content.data
         news.author = current_user.id
 
+        if current_user.rank == 'Админ' or current_user.rank == 'Модератор':
+            news.official = True
+            news.approved = True
+
         db_sess = db_session.create_session()
         db_sess.add(news)
         db_sess.commit()
@@ -154,14 +173,24 @@ def admin():
     abort(403)
 
 
-@app.route('/approve/<string:data_type>/<int:news_id>')
-def approve(data_type: str, news_id: int):
+@app.route('/approve/<string:data_type>/<int:item_id>')
+def approve(data_type: str, item_id: int):
     db_sess = db_session.create_session()
     if data_type == 'news':
-        news = db_sess.get(News, news_id)
+        news = db_sess.get(News, item_id)
         news.approved = True
         db_sess.commit()
-        return redirect('/news')
+        return redirect('/admin')
+
+
+@app.route('/decline/<string:data_type>/<int:item_id>')
+def decline(data_type: str, item_id: int):
+    db_sess = db_session.create_session()
+    if data_type == 'news':
+        news = db_sess.get(News, item_id)
+        db_sess.delete(news)
+        db_sess.commit()
+        return redirect('/admin')
 
 
 if __name__ == '__main__':

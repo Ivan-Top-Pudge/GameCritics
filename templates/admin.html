@@ -5,6 +5,7 @@
 {%endblock%}
 
 {%block body%}
+<p>Новости</p>
 <ol>
     {%for news in add_news%}
     <li>
@@ -16,4 +17,18 @@
     </li>
     {%endfor%}
 </ol>
+
+<p>Игры</p>
+<ol>
+    {%for game in add_games%}
+    <li>
+        <div>{{game.user.login}} {{game.user.rank}}</div>
+        <div>{{game.title}}</div>
+        <article>{{game.content}}</article>
+        <a href="/approve/news/{{news.id}}">Принять</a>
+        <a href="/decline/news/{{news.id}}">Отклонить</a>
+    </li>
+    {%endfor%}
+</ol>
+
 {%endblock%}

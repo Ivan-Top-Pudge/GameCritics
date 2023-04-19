@@ -1,0 +1,15 @@
+{%extends 'index.html'%}
+
+{%block head%}
+{%endblock%}
+
+{%block body%}
+<div class="news">
+    <div class="news-title">
+        {{news.user.login}}
+    </div>
+    <div class="news-content">
+        {{news.content}}
+    </div>
+</div>
+{%endblock%}

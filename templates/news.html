@@ -4,23 +4,32 @@
 
 <title>Игровые новости</title>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
 {%endblock%}
 
 {%block body%}
 <h3>Все новости</h3>
 
-<ul>
+<section class="main-content">
 {% for item in news %}
-    <li>
-        <p>{{item.title}}</p>
-        <article>{{item.content}}</article>
-    </li>
+    <div class="content-item">
+        <a href="/news/{{item.id}}" class="item-body" aria-label="{{item.title}}">
+            <div class="item-tumbnail">
+                <span>
+                    <img src="" alt="{{item.title}}">
+                </span>
+            </div>
+            <div class="item-details">
+                <span class="item-title">{{item.title}}</span>
+                <div class="item-subtitle"></div>
+                <div class="item-more-data">{{item.user.login}}</div>
+            </div>
+        </a>
+    </div>
 {%endfor%}
-</ul>
+</section>
 
 {% if current_user.is_authenticated %}
     <a href="/add_news">Добавить новость</a>
 {%endif%}
-
-
 {%endblock%}
