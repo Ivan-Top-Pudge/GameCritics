@@ -115,6 +115,7 @@ def login():
         user = db_sess.query(User).filter(User.login == form.login.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
+            flash('Вы успешно вошли в аккаунт')
             return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
@@ -130,6 +131,7 @@ def profile(user_id: int):
 
 
 @app.route('/add_news', methods=['GET', 'POST'])
+@login_required
 def add_news():
     form = NewsForm()
     if form.validate_on_submit():
@@ -174,23 +176,34 @@ def admin():
 
 
 @app.route('/approve/<string:data_type>/<int:item_id>')
+@login_required
 def approve(data_type: str, item_id: int):
-    db_sess = db_session.create_session()
-    if data_type == 'news':
-        news = db_sess.get(News, item_id)
-        news.approved = True
-        db_sess.commit()
-        return redirect('/admin')
+    if current_user.rank == 'Админ' or current_user.rank == 'Модератор':
+        db_sess = db_session.create_session()
+        if data_type == 'news':
+            news = db_sess.get(News, item_id)
+            news.approved = True
+            db_sess.commit()
+            return redirect('/admin')
+    abort(403)
 
 
 @app.route('/decline/<string:data_type>/<int:item_id>')
+@login_required
 def decline(data_type: str, item_id: int):
-    db_sess = db_session.create_session()
-    if data_type == 'news':
-        news = db_sess.get(News, item_id)
-        db_sess.delete(news)
-        db_sess.commit()
-        return redirect('/admin')
+    if current_user.rank == 'Админ' or current_user.rank == 'Модератор':
+        db_sess = db_session.create_session()
+        if data_type == 'news':
+            news = db_sess.get(News, item_id)
+            db_sess.delete(news)
+            db_sess.commit()
+            return redirect('/admin')
+    abort(403)
+
+
+@app.errorhandler(403)
+def access_denied(e):
+    return render_template('403.html')
 
 
 if __name__ == '__main__':
