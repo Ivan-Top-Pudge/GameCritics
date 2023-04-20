@@ -4,6 +4,6 @@ from wtforms.validators import DataRequired, NumberRange
 
 
 class ReviewForm(FlaskForm):
-    rate = FloatField('Оценка от 1 до 10', validators=[DataRequired(), NumberRange(1, 10)])
+    rate = FloatField('Оценка', validators=[DataRequired(), NumberRange(1, 5)])
     content = TextAreaField('Отзыв', validators=[DataRequired()])
     submit = SubmitField('Оставить отзыв')

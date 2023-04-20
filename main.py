@@ -10,6 +10,7 @@ from forms.login import LoginForm
 from forms.register import RegisterForm
 from forms.review_form import ReviewForm
 from forms.news_form import NewsForm
+from forms.search import SearchForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'critic_secret_key'
@@ -45,22 +46,25 @@ def games_list():
     return render_template('games.html', games=games)
 
 
-@app.route('/games/<link>', methods=['GET', 'POST'])
+@app.route('/games/<string:link>', methods=['GET', 'POST'])
 def game_info(link: str):
     form = ReviewForm()
     db_sess = db_session.create_session()
     game = db_sess.query(Game).filter(Game.link == link).first()
-    reviews = db_sess.query(Review).filter(Review.game_id == game.id)
-    if form.validate_on_submit():
-        review = Review()
-        review.content = form.content.data
-        review.author = current_user.id
-        review.rate = form.rate.data
-        review.game_id = game.id
-        db_sess.add(review)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('game_info.html', game=game, reviews=reviews, form=form)
+    reviews = db_sess.query(Review).filter(Review.game_id == game.id).all()
+    avg_rate = round(sum([review.rate for review in reviews if review.rate]) / len(reviews), 1)
+    if form.validate_on_submit() and current_user.is_authenticated:
+        if game.id not in [review.game_id for review in current_user.reviews]:
+            review = Review()
+            review.content = form.content.data
+            review.author = current_user.id
+            review.rate = form.rate.data
+            review.game_id = game.id
+            db_sess.add(review)
+            db_sess.commit()
+            return redirect('/')
+        abort(409)
+    return render_template('game_info.html', game=game, reviews=reviews, form=form, average=avg_rate)
 
 
 @app.route('/info')
@@ -201,9 +205,23 @@ def decline(data_type: str, item_id: int):
     abort(403)
 
 
+@app.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
+    if form.validate_on_submit():
+        searched = form.searched.data
+        return render_template('search.html', form=form, searched=searched)
+
+
 @app.errorhandler(403)
 def access_denied(e):
     return render_template('403.html')
+
+
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
 
 
 if __name__ == '__main__':

@@ -33,7 +33,12 @@
                     <li><a href="/top-users">Топ Критиков</a></li>
                     <li><a href="/info">О Сайте</a></li>
                 </ul>
-			
+				<form method="POST" action="{{url_for('search')}}">
+					{{ form.hidden_tag() }}
+					<input type="search" class="form-control" placeholder="Поиск" 
+					aria-label="Search", name="searched">
+					<button class="btn btn-outline-secondary" type="submit">Поиск</button>
+				</form>
 			{% if current_user.is_authenticated %}
             	<a href="/profile/{{current_user.id}}" class="profile">Профиль</a>
 			{% else %}

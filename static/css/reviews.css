@@ -56,3 +56,16 @@
     line-height: 1;
     padding: 0px 0px 0px 10px;
 }
+
+.average-rate{
+    font-size: 20px;
+}
+
+.rate-value{
+    width: 70px;
+    height: 70px;
+    background-color: #ffd300;
+    font-size: 40px;
+    text-align: center;
+    text-decoration: white;
+}
