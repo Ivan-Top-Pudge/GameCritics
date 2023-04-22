@@ -10,5 +10,7 @@
         <p>Фамилия {{user.surname}}</p>
         <p>Рейтинг {{user.rating}}</p>
     </div>
-    <a href="/logout" class="logout">Выйти из аккаунта</a>
+    {% if current_user.is_authenticated and current_user.login == user.login %}
+        <a href="/logout" class="logout">Выйти из аккаунта</a>
+    {%endif%}
 {%endblock%}

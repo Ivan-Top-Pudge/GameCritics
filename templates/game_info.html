@@ -18,6 +18,7 @@
     Средняя оценка
     <div class="rate-value">{{average}}</div>
 </div>
+<br>
 
 <div class="reviews">
     <h4>Отзывы</h4>
@@ -27,6 +28,11 @@
                 <div>{{item.user.login}}:</div>
                 <article>{{item.content}}</article>
             </li>
+            {% if current_user.is_authenticated and (current_user.login == item.user.login 
+                or current_user.rank in ("Админ", "Модератор")) %}
+            <a class="btn btn-primary" href="/edit_review/{{item.id}}">Редактировать</a>
+            <a class="btn btn-danger" href="/delete_review/{{item.id}}">Удалить</a>
+            {%endif%}
         {%endfor%}
     </ul>
 </div>

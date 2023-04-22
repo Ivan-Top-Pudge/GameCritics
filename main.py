@@ -209,8 +209,39 @@ def decline(data_type: str, item_id: int):
 def search():
     form = SearchForm()
     if form.validate_on_submit():
+        db_sess = db_session.create_session()
         searched = form.searched.data
-        return render_template('search.html', form=form, searched=searched)
+        games = db_sess.query(Game).filter(Game.title.like(f'%{searched}%'))
+        users = db_sess.query(User).filter(User.login.like(f'%{searched}%'))
+        return render_template('search.html', form=form, searched=searched, games=games, users=users)
+
+
+@app.route('/edit_review/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def edit_review(item_id: int):
+    db_sess = db_session.create_session()
+    review = db_sess.get(Review, item_id)
+    if current_user.rank in ("Админ", "Модератор") or review.user.id == current_user.id:
+        form = ReviewForm()
+        form.content.data = review.content
+        form.rate.data = review.rate
+        if form.validate_on_submit():
+            ...
+        return render_template(...)
+    abort(403)
+
+
+@app.route('/delete_review/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def delete_review(item_id: int):
+    db_sess = db_session.create_session()
+    review = db_sess.get(Review, item_id)
+    if current_user.rank in ("Админ", "Модератор") or review.user.id == current_user.id:
+        db_sess.delete(review)
+        db_sess.commit()
+        game = db_sess.get(Game, review.game_id)
+        return redirect(f'/games/{game.link}')
+    abort(403)
 
 
 @app.errorhandler(403)

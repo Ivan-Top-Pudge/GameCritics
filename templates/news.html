@@ -8,16 +8,17 @@
 {%endblock%}
 
 {%block body%}
-<h3>Все новости</h3>
 
 <section class="main-content">
+    <h1 class="title">Все новости</h1>
+
 {% for item in news %}
     <div class="content-item">
         <a href="/news/{{item.id}}" class="item-body" aria-label="{{item.title}}">
             <div class="item-tumbnail">
-                <span>
-                    <img src="" alt="{{item.title}}">
-                </span>
+                <!-- <span> -->
+                    <img src="" alt="{{item.title}}" class="item-image">
+                <!-- </span> -->
             </div>
             <div class="item-details">
                 <span class="item-title">{{item.title}}</span>

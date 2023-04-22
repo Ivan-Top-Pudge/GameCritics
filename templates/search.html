@@ -3,6 +3,25 @@
 {%block body%}
     
     <br/>
-    <h2>Вы искали ...</h2>
-    <p>{{searched}}</p>
+    <h2>Вы искали {{searched}}</h2>
+    <section class="search-results">
+    <h4>Игры:</h4>
+    <div class="search-results-games">
+        {%for game in games%}
+        <a class="game-info" href="/games/{{game.link}}">
+            <p>{{game.title}}</p>
+            <p>Разработчик: {{game.developer}}</p>
+        </a>
+        {%endfor%}
+    </div>
+    <h4>Пользователи</h4>
+    <div class="search-results-users">
+        {%for user in users%}
+        <a class="user-info" href="/profile/{{user.id}}">
+            <p>{{user.login}}</p>
+            <p>Имя: {{user.name}} {{user.surname}}</p>
+        </a>
+        {%endfor%}
+    </div>
+    </section>
 {%endblock%}
