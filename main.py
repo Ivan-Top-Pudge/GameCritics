@@ -1,6 +1,9 @@
-from flask import Flask, render_template, redirect, abort, flash
+from flask import Flask, render_template, redirect, abort, flash, request
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from sqlalchemy import desc
+from werkzeug.utils import secure_filename
+import uuid
+import os
 from data import db_session
 from data.news import News
 from data.users import User
@@ -100,7 +103,10 @@ def reqister():
         user.set_password(form.password.data)
 
         if form.profile_photo.data:
-            print('Есть фото')
+            image_filename = secure_filename(form.profile_photo.data.filename)
+            image_name = str(uuid.uuid1()) + "_" + image_filename
+            form.profile_photo.data.save('static/img/' + image_name)
+            user.profile_photo = image_name
         else:
             print('Нет фото')
 
