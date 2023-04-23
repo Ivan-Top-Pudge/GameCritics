@@ -17,4 +17,8 @@
     </li>
 {%endfor%}
 </ul>
+
+{% if current_user.is_authenticated and current_user.rank in ("Админ", "Модератор") %}
+    <a href="/add_game" class="add-game">Добавить игру</a>
+{%endif%}
 {%endblock%}

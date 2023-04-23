@@ -9,6 +9,7 @@ from data.news import News
 from data.users import User
 from data.games import Game
 from data.reviews import Review
+from forms.game_form import GameForm
 from forms.login import LoginForm
 from forms.register import RegisterForm
 from forms.review_form import ReviewForm
@@ -55,7 +56,7 @@ def game_info(link: str):
     db_sess = db_session.create_session()
     game = db_sess.query(Game).filter(Game.link == link).first()
     reviews = db_sess.query(Review).filter(Review.game_id == game.id).all()
-    avg_rate = round(sum([review.rate for review in reviews if review.rate]) / len(reviews), 1)
+    avg_rate = round(sum([review.rate for review in reviews if review.rate]) / len(reviews), 1) if reviews else 0
     if form.validate_on_submit() and current_user.is_authenticated:
         if game.id not in [review.game_id for review in current_user.reviews]:
             review = Review()
@@ -159,6 +160,29 @@ def add_news():
         db_sess.commit()
         return redirect('/')
     return render_template('add_news.html', form=form)
+
+
+@app.route('/add_game', methods=['GET', 'POST'])
+@login_required
+def add_games():
+    form = GameForm()
+    if form.validate_on_submit():
+        game = Game()
+        game.title = form.title.data
+        game.description = form.description.data
+        game.developer = form.developer.data
+        image_filename = secure_filename(form.logo.data.filename)
+        image_name = str(uuid.uuid1()) + "_" + image_filename
+        form.logo.data.save('static/img/' + image_name)
+        game.logo = image_name
+
+        game.link = '-'.join((game.title.lower().split()))
+
+        db_sess = db_session.create_session()
+        db_sess.add(game)
+        db_sess.commit()
+        return redirect('/games')
+    return render_template('add_game.html', form=form)
 
 
 @login_manager.user_loader

@@ -5,15 +5,22 @@
 <title>Информация об игре</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/reviews.css') }}">
-
+<style>
+    img {
+        width: 100px;
+        height: 100px;
+    }
+</style>
 {%endblock%}
 
 {%block body%}
-<h3>{{game.title}}</h3>
+<h1>{{game.title}}</h1>
 <br>
 <div>Разработчик : {{game.developer}}</div>
 <br>
-
+<img src="{{ url_for('static', filename='img/' + game.logo if game.logo
+            is not none else 'img/default_game.jpg')}}"
+             alt="Ошибка загрузки">
 <div class="average-rate">
     Средняя оценка
     <div class="rate-value">{{average}}</div>
@@ -26,6 +33,7 @@
         {%for item in reviews%}
             <li class="review">
                 <div>{{item.user.login}}:</div>
+                <div>Оценка: {{item.rate | int}}</div>
                 <article>{{item.content}}</article>
             </li>
             {% if current_user.is_authenticated and (current_user.login == item.user.login 
