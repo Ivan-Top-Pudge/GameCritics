@@ -14,7 +14,7 @@
     <h1 class="title">Все новости</h1>
     {% if current_user.is_authenticated %}
     <a href="/add_news" class="add-btn">Добавить новость</a>
-{%endif%}
+    {%endif%}
 </div>
 {% for item in news %}
     <div class="content-item">

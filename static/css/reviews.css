@@ -69,3 +69,20 @@
     text-align: center;
     text-decoration: white;
 }
+
+img{
+    width: 100px;
+    height: 100px;
+}
+
+h1{
+    text-align: center;
+    vertical-align: middle;
+}
+
+.game-title{
+    margin: auto;
+    padding-top: 20px;
+    height: fit-content;
+    width: fit-content;
+}
