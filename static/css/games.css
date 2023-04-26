@@ -53,17 +53,18 @@
     color: black;
 }
 
-.item-tumbnail {
-    background-color: aquamarine;
-    width: 240px;
-    height: 135px;
+.item-tumbnail {    
+    width: 150px;
+    height: 150px;
     border-radius: 6px;
 }
 
 .item-image {
     display: block;
-    width: 240px;
-    height: 135px;    
+    width: 150px;
+    height: 150px; 
+    object-fit: contain; 
+    object-position: center;  
 }
 
 .item-details {
@@ -90,4 +91,5 @@
 
 .item-date {
   width: 50%;
+  color: orange;
 }

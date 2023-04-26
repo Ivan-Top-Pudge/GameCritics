@@ -3,18 +3,37 @@
 {% block head %}
 
 <title>Список игр</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">
 
 {%endblock%}
 
 {%block body%}
-<h3>Все Игры</h3>
-
-<ul>
+<section class="main-content">
+    <div class="content-header">
+    <h1 class="title">Все Игры</h1>
+    {% if current_user.is_authenticated and current_user.rank in ("Админ", "Модератор") %}
+    <a href="/add_game" class="add-btn">Добавить Игру</a>
+    {%endif%}
+</div>
 {% for item in games %}
-    <li>
-        <a href="games/{{item.link}}">Ссылка</a>
-        {{item.title}}
-    </li>
+    <div class="content-item">
+        <a href="games/{{item.link}}" class="item-body" aria-label="{{item.title}}">
+            <div class="item-tumbnail">
+                <!-- <span> -->
+                    <img src="{{ url_for('static', filename='img/' + item.logo if item.logo
+                        is not none else 'img/default_game.jpg')}}"
+                     alt="Ошибка загрузки" alt="{{item.title}}" class="item-image">
+                <!-- </span> -->
+            </div>
+            <div class="item-details">
+                <h2 class="item-title">{{item.title}}</h2>
+                <div class="item-subtitle">
+                    <span class="item-date">Добавлено: {{item.created.strftime('%d-%m-%Y')}}</span>
+                </div>
+            </div>
+        </a>
+    </div>
 {%endfor%}
-</ul>
+</section>
+
 {%endblock%}

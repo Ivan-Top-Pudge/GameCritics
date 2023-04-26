@@ -1,18 +1,28 @@
+import datetime
+
 from flask import Flask, render_template, redirect, abort, flash
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from sqlalchemy import desc
+from werkzeug.utils import secure_filename
+import uuid
+import os
+from flask_restful import reqparse, Api, Resource
+
 from data import db_session
 from data.news import News
 from data.users import User
 from data.games import Game
 from data.reviews import Review
+from forms.game_form import GameForm
 from forms.login import LoginForm
 from forms.register import RegisterForm
 from forms.review_form import ReviewForm
 from forms.news_form import NewsForm
 from forms.search import SearchForm
+import api_recources
 
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = 'critic_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -52,7 +62,7 @@ def game_info(link: str):
     db_sess = db_session.create_session()
     game = db_sess.query(Game).filter(Game.link == link).first()
     reviews = db_sess.query(Review).filter(Review.game_id == game.id).all()
-    avg_rate = round(sum([review.rate for review in reviews if review.rate]) / len(reviews), 1)
+    avg_rate = round(sum([review.rate for review in reviews if review.rate]) / len(reviews), 1) if reviews else 0
     if form.validate_on_submit() and current_user.is_authenticated:
         if game.id not in [review.game_id for review in current_user.reviews]:
             review = Review()
@@ -63,7 +73,6 @@ def game_info(link: str):
             db_sess.add(review)
             db_sess.commit()
             return redirect('/')
-        abort(409)
     return render_template('game_info.html', game=game, reviews=reviews, form=form, average=avg_rate)
 
 
@@ -100,7 +109,10 @@ def reqister():
         user.set_password(form.password.data)
 
         if form.profile_photo.data:
-            print('Есть фото')
+            image_filename = secure_filename(form.profile_photo.data.filename)
+            image_name = str(uuid.uuid1()) + "_" + image_filename
+            form.profile_photo.data.save('static/img/' + image_name)
+            user.profile_photo = image_name
         else:
             print('Нет фото')
 
@@ -153,6 +165,29 @@ def add_news():
         db_sess.commit()
         return redirect('/')
     return render_template('add_news.html', form=form)
+
+
+@app.route('/add_game', methods=['GET', 'POST'])
+@login_required
+def add_games():
+    form = GameForm()
+    if form.validate_on_submit():
+        game = Game()
+        game.title = form.title.data
+        game.description = form.description.data
+        game.developer = form.developer.data
+        image_filename = secure_filename(form.logo.data.filename)
+        image_name = str(uuid.uuid1()) + "_" + image_filename
+        form.logo.data.save('static/img/' + image_name)
+        game.logo = image_name
+
+        game.link = '-'.join((game.title.lower().split()))
+
+        db_sess = db_session.create_session()
+        db_sess.add(game)
+        db_sess.commit()
+        return redirect('/games')
+    return render_template('add_game.html', form=form)
 
 
 @login_manager.user_loader
@@ -209,8 +244,39 @@ def decline(data_type: str, item_id: int):
 def search():
     form = SearchForm()
     if form.validate_on_submit():
+        db_sess = db_session.create_session()
         searched = form.searched.data
-        return render_template('search.html', form=form, searched=searched)
+        games = db_sess.query(Game).filter(Game.title.like(f'%{searched}%'))
+        users = db_sess.query(User).filter(User.login.like(f'%{searched}%'))
+        return render_template('search.html', form=form, searched=searched, games=games, users=users)
+
+
+@app.route('/edit_review/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def edit_review(item_id: int):
+    db_sess = db_session.create_session()
+    review = db_sess.get(Review, item_id)
+    if current_user.rank in ("Админ", "Модератор") or review.user.id == current_user.id:
+        form = ReviewForm()
+        form.content.data = review.content
+        form.rate.data = review.rate
+        if form.validate_on_submit():
+            ...
+        return render_template(...)
+    abort(403)
+
+
+@app.route('/delete_review/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def delete_review(item_id: int):
+    db_sess = db_session.create_session()
+    review = db_sess.get(Review, item_id)
+    if current_user.rank in ("Админ", "Модератор") or review.user.id == current_user.id:
+        db_sess.delete(review)
+        db_sess.commit()
+        game = db_sess.get(Game, review.game_id)
+        return redirect(f'/games/{game.link}')
+    abort(403)
 
 
 @app.errorhandler(403)
@@ -226,4 +292,6 @@ def base():
 
 if __name__ == '__main__':
     db_session.global_init("db/main.db")
+    api.add_resource(api_recources.GamesListResource, '/api/games')
+    api.add_resource(api_recources.GameResource, '/api/game/<int:game_id>')
     app.run(port=8080, host='127.0.0.1')

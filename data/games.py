@@ -9,8 +9,9 @@ class Game(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String)
-    genre = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    description = sqlalchemy.Column(sqlalchemy.String)
     developer = sqlalchemy.Column(sqlalchemy.String)
+    logo = sqlalchemy.Column(sqlalchemy.String)
     likes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     dislikes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     created = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.now())
