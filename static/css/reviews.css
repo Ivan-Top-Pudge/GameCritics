@@ -1,3 +1,91 @@
+.game-content {
+    width: 100%;
+    max-width: 1320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 24px;
+    margin: 0 auto;
+}
+
+.game-header {
+    display: flex;
+    align-items: center; 
+}
+
+.game-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    object-position: center;
+}
+
+.game-title{
+    margin-left: 24px;
+}
+
+.game-info {
+    width: 100%;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-developer {
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+.average-rate{    
+    font-size: 20px;
+}
+
+.rate-value{
+    display: block;
+    width: 100px;
+    height: 100px;    
+    font-size: 40px;
+    border-radius: 8px;
+    padding: 20px;
+}
+.rate-value_low {
+    background-color: red;
+}
+.rate-value_medium {
+    background-color: yellow;
+}
+.rate-value_high {
+    background-color: green;
+}
+
+.game-info-title {
+    font-size: 32px;
+    font-size: bold;
+}
+
+.game-info-list {
+    list-style-type: circle;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+   
+}
+
+.game-info-item {
+    border-bottom: 1px solid lightgrey;
+    padding: 8px 0;
+}
+
+.game-info-text {
+    display: block;
+}
+
+.game-info-rate {
+    display: block;
+}
+
 .rating {
     display: flex;
     align-items: flex-end;
@@ -55,37 +143,4 @@
     font-size: 50%;
     line-height: 1;
     padding: 0px 0px 0px 10px;
-}
-
-.average-rate{
-    font-size: 20px;
-}
-
-.rate-value{
-    width: 70px;
-    height: 70px;
-    background-color: #ffd300;
-    font-size: 40px;
-    text-align: center;
-    text-decoration: white;
-}
-
-img{
-    width: 100px;
-    height: 100px;
-}
-
-h1{
-    /* text-align: center;
-    vertical-align: middle; */
-    margin-left: 24px;
-}
-
-.game-title{
-    display: flex;
-    align-items: center;
-    margin: auto;
-    padding-top: 20px;
-    height: fit-content;
-    width: fit-content;
 }

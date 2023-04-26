@@ -1,6 +1,13 @@
 "use strict"
-console.log('priver')
 const ratings = document.querySelectorAll('.rating');
+const avgValue = document.querySelector('.rate-value');
+
+if (avgValue.textContent < 3) {
+    avgValue.classList.add('rate-value_low')
+} else if (avgValue.textContent <= 4) {
+    avgValue.classList.add('rate-value_medium')
+} else avgValue.classList.add('rate-value_high')
+
 
 if (ratings.length > 0){
     initRatings();
