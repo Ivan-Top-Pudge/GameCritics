@@ -31,13 +31,6 @@ class GameResource(Resource):
                      'more_info': {'avg_rate': avg_rate, 'reviews_count': len(reviews)}}
         })
 
-    def delete(self, game_id):
-        abort_if_game_not_found(game_id)
-        db_sess = db_session.create_session()
-        game = db_sess.get(Game, game_id)
-        db_sess.delete(game)
-        db_sess.commit()
-
 
 class GamesListResource(Resource):
     def get(self):
