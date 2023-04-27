@@ -21,20 +21,18 @@
         <a href="/news/{{item.id}}" class="item-body" aria-label="{{item.title}}">
             <div class="item-tumbnail">
                 <!-- <span> -->
-                    <img src="" alt="{{item.title}}" class="item-image">
+                    <img src="{{ url_for('static', filename='img/news.jpg')}}" alt="{{item.title}}" class="item-image">
                 <!-- </span> -->
             </div>
             <div class="item-details">
                 <h2 class="item-title">{{item.title}}</h2>
                 <div class="item-subtitle">
                 <div class="item-more-data">{{item.user.login}}</div>
-                <span class="item-date">22.04.2023</span>
+                <span class="item-date">{{item.date.strftime('%d-%m-%Y')}}</span>
             </div>
             </div>
         </a>
     </div>
 {%endfor%}
 </section>
-
-
 {%endblock%}

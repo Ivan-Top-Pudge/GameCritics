@@ -31,7 +31,7 @@ login_manager.init_app(app)
 @app.route('/')
 def home_page():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.official == 1).all()
+    news = db_sess.query(News).filter(News.official == 1).order_by(desc(News.id))
     return render_template('home_page.html', news=news)
 
 
@@ -79,13 +79,6 @@ def game_info(link: str):
 @app.route('/info')
 def site_info():
     return render_template('info.html')
-
-
-@app.route('/top-users')
-def top_users():
-    db_sess = db_session.create_session()
-    users = db_sess.query(User).order_by(User.rating).all()
-    return render_template('top_users.html', users=users)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -193,7 +186,7 @@ def add_games():
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+    return db_sess.get(User, user_id)
 
 
 @app.route('/logout')
@@ -246,9 +239,10 @@ def search():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         searched = form.searched.data
-        games = db_sess.query(Game).filter(Game.title.like(f'%{searched}%'))
-        users = db_sess.query(User).filter(User.login.like(f'%{searched}%'))
+        games = db_sess.query(Game).filter(Game.title.like(f'%{searched}%')).all()
+        users = db_sess.query(User).filter(User.login.like(f'%{searched}%')).all()
         return render_template('search.html', form=form, searched=searched, games=games, users=users)
+    return redirect('/')
 
 
 @app.route('/edit_review/<int:item_id>', methods=['GET', 'POST'])
@@ -294,4 +288,5 @@ if __name__ == '__main__':
     db_session.global_init("db/main.db")
     api.add_resource(api_recources.GamesListResource, '/api/games')
     api.add_resource(api_recources.GameResource, '/api/game/<int:game_id>')
+    db_sess = db_session.create_session()
     app.run(port=8080, host='127.0.0.1')

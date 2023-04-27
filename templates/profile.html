@@ -1,19 +1,24 @@
 {%extends "index.html"%}
 
 {%block head%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 {%endblock%}
 
 {%block body%}
-    <h3>Профиль {{user.login}}</h3>
-    <div class="user_info">
+    <section class="main-content">
+    <h1>Профиль {{user.login}}</h1>
+    <div class="user-content">
         <img src="{{ url_for('static', filename='img/' + user.profile_photo if user.profile_photo
             is not none else 'img/default.jpg')}}"
              alt="Ошибка загрузки">
-        <p>Имя {{user.name}}</p>
-        <p>Фамилия {{user.surname}}</p>
-        <p>Рейтинг {{user.rating}}</p>
+        <div class="user-info">
+            <p>Имя: {{user.name if user.name else "<Не указано>"}}</p>
+            <p>Фамилия: {{user.surname if user.surname else "<Не указано>"}}</p>
+            <p>Ранг: {{user.rank}} </p>
+        </div>
     </div>
     {% if current_user.is_authenticated and current_user.login == user.login %}
-        <a href="/logout" class="logout">Выйти из аккаунта</a>
+        <a class="btn btn-dark" href="/logout" class="logout">Выйти из аккаунта</a>
     {%endif%}
+    </section>
 {%endblock%}
