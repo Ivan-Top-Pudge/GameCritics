@@ -1,12 +1,9 @@
-import datetime
-
 from flask import Flask, render_template, redirect, abort, flash
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import uuid
-import os
-from flask_restful import reqparse, Api, Resource
+from flask_restful import Api
 
 from data import db_session
 from data.news import News
@@ -90,10 +87,14 @@ def reqister():
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
+        if db_sess.query(User).filter(User.login == form.login.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
-                                   message="На эту почту уже зарегистрирован аккаунт")
+                                   message="Аккаунт с таким именем уже существует")
+        elif db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="На почту зарегестрирован другой аккаунт")
         user = User()
         user.login = form.login.data
         user.name = form.name.data
@@ -288,5 +289,4 @@ if __name__ == '__main__':
     db_session.global_init("db/main.db")
     api.add_resource(api_recources.GamesListResource, '/api/games')
     api.add_resource(api_recources.GameResource, '/api/game/<int:game_id>')
-    db_sess = db_session.create_session()
     app.run(port=8080, host='127.0.0.1')
