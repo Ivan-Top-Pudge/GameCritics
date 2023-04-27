@@ -1,0 +1,15 @@
+.main-content {
+    padding-top: 24px;
+    width: 900px;
+    margin: auto;
+}
+
+img {
+    width: 200px;
+    height: 200px;
+}
+
+.user-info{
+    border: 1px lightgray solid;
+    border-radius: 10px;
+}

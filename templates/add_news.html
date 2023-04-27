@@ -1,14 +1,21 @@
 {% extends "index.html" %}
 
 {% block head %}
+<style>
+    .news-form{
+        padding-top: 24px;
+        width: 80%;
+        margin: auto;
+    }
+</style>
 {%endblock%}
 
 {%block body%}
     
-<form action="" method="post">
+<form action="" method="post" class="news-form">
     {{ form.hidden_tag() }}
 
-    <p class="field">
+    <p class="title">
         {{ form.title.label }}<br>
         {{ form.title(class="form-control", type="string") }}<br>
         {% for error in form.title.errors %}
@@ -18,9 +25,9 @@
         {% endfor %}
     </p>
 
-    <p class="field">
+    <p class="content">
         {{ form.content.label }}<br>
-        {{ form.content(class="form-control", type="string") }}<br>
+        {{ form.content(class="form-control", type="string", rows=3) }}<br>
         {% for error in form.content.errors %}
             <div class="alert alert-danger" role="alert">
                 {{ error }}

@@ -2,11 +2,23 @@
 
 {%block head%}
 <title>Вход</title>
+<style>
+    h1{
+        text-align: center;
+        vertical-align: middle;
+        padding-top: 24px;
+    }
+    .login{
+        width: 50%;
+        margin: auto;
+    }
+</style>
 {%endblock%}
 
 {% block body %}
+    <section class="login">
     <h1>Авторизация</h1>
-    <form action="" method="post">
+    <form method="post">
         {{ form.hidden_tag() }}
         <p class="field">
             {{ form.login.label }}<br>
@@ -30,5 +42,6 @@
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
         <div>{{ message }}</div>
     </form>
-    <a href="/register" class="register">Нет аккаунта? Регистрация</a>
+    <a class="btn btn-info" href="/register" class="register">Нет аккаунта? Регистрация</a>
+    </section>
 {% endblock %}

@@ -2,7 +2,7 @@
 const ratings = document.querySelectorAll('.rating');
 const avgValue = document.querySelector('.rate-value');
 
-if (avgValue.textContent < 3) {
+if (avgValue.textContent < 3 & avgValue.textContent > 0) {
     avgValue.classList.add('rate-value_low')
 } else if (avgValue.textContent <= 4) {
     avgValue.classList.add('rate-value_medium')

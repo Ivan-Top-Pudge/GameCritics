@@ -35,8 +35,7 @@
             </li>
             {% if current_user.is_authenticated and (current_user.login == item.user.login 
                 or current_user.rank in ("Админ", "Модератор")) %}
-            <a class="btn btn-primary" href="/edit_review/{{item.id}}">Редактировать</a>
-            <a class="btn btn-danger" href="/delete_review/{{item.id}}">Удалить</a>
+            <a class="btn btn-danger delete-review" href="/delete_review/{{item.id}}">Удалить</a>
             {%endif%}
         {%endfor%}
     </ul>
@@ -49,7 +48,7 @@
         {{ form.hidden_tag() }}
         <p class="field">
             {{ form.content.label }}<br>
-            {{ form.content(class="form-control", type="string") }}<br>
+            {{ form.content(class="form-control review-content", rows=4) }}<br>
             {% for error in form.content.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
@@ -71,10 +70,10 @@
             <div class="rating_value">0</div>
         </div>
         {% for error in form.rate.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
 
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
 
